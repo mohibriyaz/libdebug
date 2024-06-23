@@ -1,0 +1,30 @@
+
+import libdebug
+
+# Path to the binary to debug
+binary_path = "./testa"
+
+# Create a debugger instance
+dbg = libdebug.debugger()
+
+# Start the process
+pid = dbg.exec(binary_path)
+
+# Wait for the process to stop
+dbg.wait_break()
+
+# Set a breakpoint at the address of print_message (assuming it's at 0x400540)
+# You need to find the correct address using a tool like `objdump` or `gdb`
+dbg.set_breakpoint(0x1149)
+
+# Continue the execution
+dbg.cont()
+
+# Wait for the breakpoint to be hit
+dbg.wait_break()
+
+# Print the state of registers or other information
+print(dbg.get_registers())
+
+# Detach from the process
+dbg.detach()
