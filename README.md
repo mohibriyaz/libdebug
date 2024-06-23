@@ -29,7 +29,7 @@ d = debugger()
 
 d.attach(1234)
 ```
-sweede
+test
 
 The debugger has many more options that can be configured by the user:
 ```python
