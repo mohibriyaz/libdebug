@@ -18,8 +18,9 @@ class BreakPointDebugger:
         self.bp = None
         self.bp_address = None
         self.instruction_count = 0
+        self.instruction_types = []
 
-     #To start the debugger
+    # To start the debugger
     def start(self):
         try:
             self.dbg.run()
@@ -29,7 +30,7 @@ class BreakPointDebugger:
             traceback.print_exc()
             sys.exit(1)
 
-       #Setting the breakpoint
+    # Setting the breakpoint
     def set_breakpoint(self, func_name):
         try:
             self.bp = self.dbg.breakpoint(func_name)
@@ -40,7 +41,7 @@ class BreakPointDebugger:
             traceback.print_exc()
             sys.exit(1)
 
-      #Execution continues till result/error is found
+    # Execution continues till result/error is found
     def continue_execution(self):
         try:
             self.dbg.cont()
@@ -53,6 +54,7 @@ class BreakPointDebugger:
         try:
             self.dbg.step()
             self.instruction_count += 1
+            self.instruction_types.append(self.get_current_instruction_type())
         except Exception as e:
             print(f"Error stepping: {e}")
             traceback.print_exc()
@@ -66,7 +68,16 @@ class BreakPointDebugger:
             traceback.print_exc()
             sys.exit(1)
 
-      #debugger kill
+    def get_current_instruction_type(self):
+        try:
+            instruction = self.dbg.instruction(self.dbg.rip)
+            return instruction.mnemonic
+        except Exception as e:
+            print(f"Error getting current instruction type: {e}")
+            traceback.print_exc()
+            return "Unknown"
+
+    # debugger kill
     def kill(self):
         try:
             self.dbg.kill()
@@ -77,6 +88,9 @@ class BreakPointDebugger:
 
     def get_instruction_count(self):
         return self.instruction_count
+
+    def get_instruction_types(self):
+        return self.instruction_types
 
 if __name__ == "__main__":
     binary_path = "/home/mohibriyaz/Downloads/libdebug-main/examples/breakpoint/test" #path of the binary file
@@ -108,6 +122,10 @@ if __name__ == "__main__":
         # Print the instruction pointer at the breakpoint
         print(f"Instruction pointer (RIP) at breakpoint: {hex(debugger_instance.get_instruction_pointer())}")
 
+        # Print the types of instructions executed
+        instruction_types = debugger_instance.get_instruction_types()
+        print(f"Types of instructions executed: {instruction_types}")
+
         # Calculate total execution time
         total_time = time.time() - start_time
         print(f"Total execution time: {total_time:.2f} seconds")
@@ -137,9 +155,8 @@ if __name__ == "__main__":
                  xy=(max_time, max_instructions), 
                  xytext=(max_time + (max_time * 0.1), max_instructions + (max_instructions * 0.1)), 
                  arrowprops=dict(facecolor='black', arrowstyle='->'),
-                 fontsize=12, color='red')
+                 fontsize=12, color='black')
 
-    
     plt.legend(fontsize=12)
     plt.gca().set_facecolor('#f7f7f7')
     plt.tight_layout()
@@ -149,10 +166,10 @@ if __name__ == "__main__":
     os.makedirs(output_dir, exist_ok=True)
 
     # Save the plot to the specified directory
-    output_path = os.path.join(output_dir, 'line graph.png')
+    output_path = os.path.join(output_dir, 'line_graph.png')
     plt.savefig(output_path)
 
-    # histogram plotting
+    # Histogram plotting
     plt.figure(figsize=(10, 6))
     plt.hist(execution_counts, bins=20, edgecolor='black', color='skyblue')
 
@@ -166,4 +183,19 @@ if __name__ == "__main__":
     # Save the histogram 
     histogram_output_path = os.path.join(output_dir, 'histogram.png')
     plt.savefig(histogram_output_path)
+    plt.show()
+
+    # Instruction types plotting
+    unique_types, counts = np.unique(instruction_types, return_counts=True)
+
+    plt.figure(figsize=(12, 8))
+    plt.bar(unique_types, counts, color='purple')
+    plt.xlabel('Instruction Type', fontsize=14)
+    plt.ylabel('Frequency', fontsize=14)
+    plt.title('Frequency of Instruction Types Executed', fontsize=16)
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+
+    instruction_types_output_path = os.path.join(output_dir, 'instruction_types.png')
+    plt.savefig(instruction_types_output_path)
     plt.show()
