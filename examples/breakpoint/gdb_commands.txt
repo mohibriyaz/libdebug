@@ -1,0 +1,13 @@
+set pagination off
+file /home/mohibriyaz/Downloads/libdebug-main/examples/breakpoint/test
+break print_message # Replace with actual addresses
+#break *0x5555555592a0 # Replace with actual addresses
+run
+while 1
+    continue
+    info registers rip
+    if $pc == 0
+        break
+    end
+end
+quit
