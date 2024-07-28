@@ -17,7 +17,7 @@ def print_binary_data_as_hex(binary_data, bytes_per_line=16):
         hex_values = ' '.join(f'{b:02x}' for b in line)
         print(f'{i:08x}  {hex_values}')
 
-def disassemble_binary(binary_data, start_address=0x0000):
+def disassemble_binary(binary_data, start_address=0x100000):
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
     instructions = md.disasm(binary_data, start_address)
     
