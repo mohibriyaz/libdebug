@@ -263,7 +263,7 @@ if __name__ == "__main__":
         start_time = time.time()
         
         max_steps = 25  # Maximum number of steps to prevent infinite loop
-        summary_interval = 5  # Interval at which to print the summary of instructions
+        summary_interval = 50  # Interval at which to print the summary of instructions
         last_instruction_pointer = None
         repeated_instruction_count = 0
 
